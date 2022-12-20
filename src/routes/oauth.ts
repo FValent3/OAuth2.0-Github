@@ -1,5 +1,5 @@
-import { Express } from 'express'
+import { Router } from 'express'
 
-export function Oauth (app: Express): void {
-  app.use('/oauth/redirect')
+export function OAuth (router: Router): void {
+  router.get('/oauth/redirect')
 }
