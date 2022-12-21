@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 export class OAuthController {
   private readonly clientId: string
@@ -10,14 +10,29 @@ export class OAuthController {
     this.clientSecret = clientSecret
   }
 
-  async handle (req: Request, res: Response): Promise<void> {
+  async handle (req: Request, res: Response): Promise<undefined | Response > {
     try {
-      const requestToken: string = req.query.code
-      const { data } = await axios.get(`https://github.com/login/oauth/access_token?client_id=${this.clientId}&client_secret=${this.clientSecret}}&code=${requestToken}`)
-      const accessToken: string = data.access_token
-      res.redirect(`welcome.html?access_token=${accessToken}`)
+      const authUrl: string = 'https://github.com/login/oauth/access_token'
+      const requestToken: string = req.query.code as string
+
+      const clientData: object = {
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        code: requestToken
+      }
+
+      const headers: object = {
+        headers: {
+          Accept: 'application/json',
+          contentType: 'application/json'
+        }
+      }
+
+      const { data }: AxiosResponse = await axios.post(authUrl, clientData, headers)
+      const accessToken = data.access_token as string
+      res.redirect(`/welcome.html?access_token=${accessToken}`)
     } catch (err) {
-      res.status(400).json({ message: 'Bad request' })
+      return res.status(400).json({ message: 'Bad request', error: err })
     }
   }
 }

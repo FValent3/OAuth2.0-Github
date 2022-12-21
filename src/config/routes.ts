@@ -1,8 +1,9 @@
 import { Express, Router, static as _static } from 'express'
-import path from 'path'
+import { OAuth } from '../routes/oauth'
 
 export default (app: Express): void => {
-  const router = Router()
-  app.use(_static(path.join(__dirname, '/public')))
-  app.use('/api', router)
+  const router: Router = Router()
+  OAuth(router)
+  app.use('/', router)
+  app.use(_static('./src/public'))
 }
