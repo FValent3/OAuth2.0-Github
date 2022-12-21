@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Olá</title>
+</head>
+
+<body></body>
+<script>
+  const query = window.location.search.substring(1);
+
+  const apiURL = "https://api.github.com/user";
+  const token = query.split("access_token=")[1];
+  const headers = {
+    headers: { Authorization: `token ${token}` }
+  }
+
+  fetch(apiURL, headers)
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res)
+      const userNode = document.createTextNode(
+        `Bem-vindo, ${res.name}.
+         Você está logado como ${res.login}`
+      )
+      document.body.appendChild(userNode);
+    });
+
+</script>
+
+</html>
